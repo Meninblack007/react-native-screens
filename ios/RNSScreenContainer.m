@@ -268,16 +268,12 @@ RCT_EXPORT_MODULE()
 
 - (void)markUpdated:(RNSScreenContainerView *)screen
 {
+  RCTAssertMainQueue();
   [_markedContainers addObject:screen];
   if ([_markedContainers count] == 1) {
     // we enqueue updates to be run on the main queue in order to make sure that
-    // all these updates (new screens attached etc) are executed in one batch.
-    // We call it asynchronously because the events being fired when swiping the screen
-    // resolve in calling this method, and inside it, the same type of event
-    // can be fired when calling e.g. `notifyFinishTransitioning` leading to a deadlock.
-    // See https://github.com/software-mansion/react-native-screens/issues/726#issuecomment-757879605
-    // for more information.
-    dispatch_async(dispatch_get_main_queue(), ^{
+    // all this updates (new screens attached etc) are executed in one batch
+    RCTExecuteOnMainQueue(^{
       for (RNSScreenContainerView *container in self->_markedContainers) {
         [container updateContainer];
       }
