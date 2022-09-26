@@ -446,34 +446,7 @@
     // nothing pushed yet
     [_controller setViewControllers:controllers animated:NO];
   } else if (top != lastTop) {
-    if (![controllers containsObject:lastTop]) {
-      // if the previous top screen does not exist anymore and the new top was not on the stack before, probably replace was called, so we check the animation
-      if ( ![_controller.viewControllers containsObject:top] && ((RNSScreenView *) top.view).replaceAnimation == RNSScreenReplaceAnimationPush) {
-        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-        [_controller pushViewController:top animated:shouldAnimate];
-        [_controller setViewControllers:newControllers animated:NO];
-      } else {
-        // last top controller is no longer on stack
-        // in this case we set the controllers stack to the new list with
-        // added the last top element to it and perform (animated) pop
-        NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-        [newControllers addObject:lastTop];
-        [_controller setViewControllers:newControllers animated:NO];
-        [_controller popViewControllerAnimated:shouldAnimate];
-      }
-    } else if (![_controller.viewControllers containsObject:top]) {
-      // new top controller is not on the stack
-      // in such case we update the stack except from the last element with
-      // no animation and do animated push of the last item
-      NSMutableArray *newControllers = [NSMutableArray arrayWithArray:controllers];
-      [newControllers removeLastObject];
-      [_controller setViewControllers:newControllers animated:NO];
-      [_controller pushViewController:top animated:shouldAnimate];
-    } else {
-      // don't really know what this case could be, but may need to handle it
-      // somehow
-      [_controller setViewControllers:controllers animated:shouldAnimate];
-    }
+    [_controller setViewControllers:controllers animated:shouldAnimate];
   } else {
     // change wasn't on the top of the stack. We don't need animation.
     [_controller setViewControllers:controllers animated:NO];
